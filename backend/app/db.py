@@ -16,6 +16,13 @@ if DATABASE_URL.startswith("sqlite"):
 engine = create_engine(DATABASE_URL, future=True, **_kwargs)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
+# Register live change synchronization to MongoDB Atlas
+try:
+    from .mongodb import register_sqlalchemy_mongo_hooks
+    register_sqlalchemy_mongo_hooks(SessionLocal)
+except Exception:
+    pass
+
 
 class Base(DeclarativeBase):
     pass

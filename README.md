@@ -35,6 +35,7 @@ These are non-secret demo placeholders; override with `HIMAVAH_DEMO_PASSWORD` / 
 
 ## Architecture
 - **Backend**: FastAPI, Pydantic v2, SQLAlchemy 2 (SQLite default; PostgreSQL via `DATABASE_URL`).
+- **Database & MongoDB Atlas**: Integrated with MongoDB Atlas (`cluster0.se6sibu.mongodb.net`, database: `himavahpro`). All data entries (users, posts/nodes, routes, inventory, consumption history, stock movements, AI recommendations, human decisions, convoys, field reports, IoT sensors, audit trail hash chain, and scenario runs) are structured and persisted in real time to MongoDB Atlas collections with optimized indexes. Real-time status available at `/api/mongodb/status`.
   RBAC is enforced server-side per endpoint (`require(*perms)`); denied attempts are audit-logged.
   Audit log is a SHA-256 hash chain with a tamper-detection demo (on an in-memory copy).
   Identity sits behind an `IdentityProvider` boundary; demo tokens are HMAC-signed (secret from `HIMAVAH_SECRET`, else generated into `data/.secret`).

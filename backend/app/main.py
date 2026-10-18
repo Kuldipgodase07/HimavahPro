@@ -1,6 +1,7 @@
 """HimavahPro API (hackathon prototype, synthetic data)."""
 from __future__ import annotations
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -10,10 +11,21 @@ from . import config
 from .routers import auth, decisions, governance, ops
 from .seed import ensure_seeded
 
+logger = logging.getLogger("himavahpro")
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     ensure_seeded()
+    # Synchronize all records to MongoDB Atlas if enabled
+    if config.MONGODB_SYNC_ENABLED:
+        try:
+            from .db import SessionLocal
+            from .mongodb import sync_all_to_mongo
+            with SessionLocal() as session:
+                sync_all_to_mongo(session)
+        except Exception as e:
+            logger.warning(f"MongoDB startup sync error: {e}")
     yield
 
 
@@ -27,3 +39,10 @@ for r in (auth.router, ops.router, decisions.router, governance.router):
 @app.get("/api/health")
 def health():
     return {"status": "ok", "product": "HimavahPro", "simulated": True, "demo_auth": config.DEMO_AUTH}
+
+
+@app.get("/api/mongodb/status")
+def mongodb_status():
+    """Returns the real-time connection status and document counts for MongoDB Atlas."""
+    from .mongodb import get_mongo_status
+    return get_mongo_status()

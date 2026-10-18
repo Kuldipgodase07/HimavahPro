@@ -3,6 +3,7 @@ _tmp = tempfile.mkdtemp()
 os.environ["HIMAVAH_DATA_DIR"] = _tmp
 os.environ["DATABASE_URL"] = f"sqlite:///{_tmp}/test.db"
 os.environ["HIMAVAH_SECRET"] = "test-secret"
+os.environ["HIMAVAH_MONGODB_SYNC"] = "false"
 
 import pytest
 from fastapi.testclient import TestClient

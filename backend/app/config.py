@@ -18,6 +18,14 @@ def _flag(name: str, default: bool) -> bool:
 # postgresql+psycopg://user:pass@db:5432/himavahpro) for production-oriented deployments.
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DATA_DIR / 'himavahpro.db'}")
 
+# MongoDB Atlas configuration
+MONGODB_URL = os.getenv(
+    "MONGODB_URL",
+    "mongodb+srv://HimavahPro:Himavah%4026@cluster0.se6sibu.mongodb.net/himavahpro?retryWrites=true&w=majority"
+)
+MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "himavahpro")
+MONGODB_SYNC_ENABLED = _flag("HIMAVAH_MONGODB_SYNC", True)
+
 # Demonstration authentication. Replace with an approved identity provider later
 # (see app/auth.py: the IdentityProvider boundary).
 DEMO_AUTH = _flag("HIMAVAH_DEMO_AUTH", True)
