@@ -1,0 +1,18 @@
+services:
+  api:
+    build: ./backend
+    env_file: .env
+    environment:
+      HIMAVAH_DATA_DIR: /app/data
+      HIMAVAH_CORS_ORIGINS: http://localhost:8080
+    volumes:
+      - api-data:/app/data
+    # For PostgreSQL, set DATABASE_URL in .env and add a postgres service of your own.
+  web:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+volumes:
+  api-data:

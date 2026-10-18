@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-deep: #351a55;
+  --color-deep-2: #2a1445;
+  --color-lilac: #746fa7;
+  --color-lilac-soft: #efedf7;
+  --color-lilac-line: #dcd9ec;
+  --color-teal: #3498b3;
+  --color-blue: #355493;
+  --color-ink: #1f1f24;
+  --color-gray: #4e4f4f;
+  --color-muted: #6b6c75;
+  --color-bg: #f5f6f8;
+  --color-line: #e4e6ec;
+  --color-ok: #7dc161;
+  --color-ok-ink: #2f6b1a;
+  --color-warn: #ffcd2e;
+  --color-warn-ink: #7a5b00;
+  --color-orange: #f57f2a;
+  --color-orange-ink: #9a4308;
+  --color-crit: #d64545;
+  --color-crit-ink: #a02626;
+}
+
+html { font-family: var(--font-sans); color: var(--color-ink); background: var(--color-bg); -webkit-font-smoothing: antialiased; }
+body { margin: 0; min-height: 100vh; font-size: 14px; line-height: 1.5; }
+button, input, select, textarea { font: inherit; }
+.num { font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 2px solid var(--color-blue); outline-offset: 2px; border-radius: 6px; }
+.maplibregl-ctrl-attrib { display: none; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+@keyframes shimmer { 0% { background-position: -400px 0 } 100% { background-position: 400px 0 } }
+.skeleton { background: linear-gradient(90deg, #eceef3 25%, #f6f7fa 37%, #eceef3 63%); background-size: 800px 100%; animation: shimmer 1.4s infinite linear; border-radius: 8px; }
+.skip-link { position: absolute; left: -999px; top: 8px; background: #fff; padding: 8px 12px; border-radius: 8px; z-index: 100; }
+.skip-link:focus { left: 8px; }
