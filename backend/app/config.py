@@ -6,7 +6,10 @@ import secrets
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = Path(os.getenv("HIMAVAH_DATA_DIR", BASE_DIR / "data"))
+# On Vercel and serverless environments, the filesystem is read-only except /tmp
+_is_serverless = bool(os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+_default_data_dir = Path("/tmp/himavah_data") if _is_serverless else BASE_DIR / "data"
+DATA_DIR = Path(os.getenv("HIMAVAH_DATA_DIR", _default_data_dir))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
