@@ -11,8 +11,20 @@ export default function SignIn() {
   const [username, setU] = useState(''); const [password, setP] = useState(''); const [show, setShow] = useState(false); const [remember, setR] = useState(false)
   const [errs, setErrs] = useState<{ u?: string; p?: string; form?: string }>({}); const [busy, setBusy] = useState(false)
   const [challenge, setChallenge] = useState<string | null>(null); const [code, setCode] = useState(''); const [ok, setOk] = useState(false)
-  const [roles, setRoles] = useState<{ role: string; label: string; description: string }[]>([]); const [demoNotice, setDemoNotice] = useState('')
-  useEffect(() => { api('/api/auth/demo-roles').then((d) => { setRoles(d.roles); setDemoNotice(d.notice ?? '') }).catch(() => {}) }, [])
+  const [roles, setRoles] = useState<{ role: string; label: string; description: string }[]>([])
+  const [demoNotice, setDemoNotice] = useState('')
+  useEffect(() => {
+    api('/api/auth/demo-roles')
+      .then((d) => {
+        if (d && Array.isArray(d.roles)) {
+          setRoles(d.roles)
+          setDemoNotice(typeof d.notice === 'string' ? d.notice : '')
+        } else {
+          setRoles([])
+        }
+      })
+      .catch(() => { setRoles([]) })
+  }, [])
   const dest = (loc.state as any)?.from ?? '/app'
   if (user && !ok) return <Navigate to={dest} replace />
   const finish = (r: { token: string; user: Me }) => { setOk(true); setSession(r.token, r.user, remember); setTimeout(() => nav(dest, { replace: true }), 600) }
@@ -67,7 +79,7 @@ export default function SignIn() {
               <div className="flex gap-2"><Button type="button" onClick={() => { setChallenge(null); setCode(''); setErrs({}) }}>Back</Button><Button type="submit" variant="primary" className="flex-1" loading={busy}>Verify and sign in</Button></div>
             </form>
           )}
-          {!ok && !challenge && roles.length > 0 && (
+          {!ok && !challenge && Array.isArray(roles) && roles.length > 0 && (
             <div className="mt-7">
               <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted"><UserCog className="h-3.5 w-3.5" aria-hidden />Demo sign-in by role</div>
               <p className="mb-2 text-xs text-muted">{demoNotice} Skips the password and verification steps.</p>

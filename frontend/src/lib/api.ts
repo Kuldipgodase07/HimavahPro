@@ -21,7 +21,11 @@ export async function api<T = any>(path: string, opts: { method?: string; body?:
   } catch { throw new ApiError(0, 'Cannot reach the HimavahPro API. Check your connection or that the backend is running.') }
   if (res.status === 401 && token && !path.startsWith('/api/auth/')) { tokenStore.clear(); window.dispatchEvent(new Event('hv:unauthorised')) }
   if (!res.ok) { let d: unknown; try { d = (await res.json()).detail } catch { d = res.statusText } throw new ApiError(res.status, detailText(d)) }
-  return (res.headers.get('content-type')?.includes('json') ? res.json() : res.text()) as Promise<T>
+  const isJson = res.headers.get('content-type')?.includes('json')
+  if (path.startsWith('/api/') && !isJson) {
+    throw new ApiError(res.status || 500, 'Expected JSON response from backend API, but received non-JSON (HTML/text). Ensure backend is running and reachable.')
+  }
+  return (isJson ? res.json() : res.text()) as Promise<T>
 }
 export async function download(path: string, filename: string) {
   const token = tokenStore.get()

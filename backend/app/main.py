@@ -17,13 +17,15 @@ logger = logging.getLogger("himavahpro")
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     ensure_seeded()
-    # Synchronize all records to MongoDB Atlas if enabled
+    # Synchronize all records to MongoDB Atlas if enabled and needed
     if config.MONGODB_SYNC_ENABLED:
         try:
-            from .db import SessionLocal
-            from .mongodb import sync_all_to_mongo
-            with SessionLocal() as session:
-                sync_all_to_mongo(session)
+            from .mongodb import get_mongo_db, sync_all_to_mongo
+            db = get_mongo_db()
+            if db is not None and db.users.count_documents({}) == 0:
+                from .db import SessionLocal
+                with SessionLocal() as session:
+                    sync_all_to_mongo(session)
         except Exception as e:
             logger.warning(f"MongoDB startup sync error: {e}")
     yield
